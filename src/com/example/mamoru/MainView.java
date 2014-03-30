@@ -95,6 +95,7 @@ public class MainView extends Fragment {
             }
         });
 
+
         timerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snap) {
