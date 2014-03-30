@@ -12,11 +12,14 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,24 +31,52 @@ public class ConfigActivity extends Activity {
 	ArrayList<String> listItems;
 
 	ArrayAdapter<String> adapter;
-	private String username;
+	private EditText name;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_config);
-		
-		
+
+		name = (EditText) findViewById(R.id.nameValue);
 
 		fetchContact = (Button) findViewById(R.id.button_Fetch);
-
+		fetchContact.setEnabled(false);
 		listView = (ListView) findViewById(R.id.listView);
 		listItems = new ArrayList<String>();
 
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, listItems);
 
+		name.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				if(!s.toString().isEmpty()){
+					fetchContact.setEnabled(true);
+				}else{
+					fetchContact.setEnabled(false);
+				}
+
+			}
+		});
+
 		listView.setAdapter(adapter);
+		
 		fetchContact.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -55,30 +86,25 @@ public class ConfigActivity extends Activity {
 				startActivityForResult(intent, 0);
 			}
 		});
-		
-//		getUserName();
-		Toast.makeText(getApplicationContext(),
-				username, Toast.LENGTH_SHORT).show();
+
+		// getUserName();
+
 	}
-	
-/*	public void getUserName(){
-		 AccountManager manager = AccountManager.get(this); 
-		    Account[] accounts = manager.getAccountsByType("com.google"); 
-		    List<String> possibleEmails = new LinkedList<String>();
 
-		    for (Account account : accounts) {
-		      // TODO: Check possibleEmail against an email regex or treat
-		      // account.name as an email address only for certain account.type values.
-		      possibleEmails.add(account.name);
-		    }
-
-		    if(!possibleEmails.isEmpty() && possibleEmails.get(0) != null){
-		        String email = possibleEmails.get(0);
-		        String[] parts = email.split("@");
-		        if(parts.length > 0 && parts[0] != null)
-		        	username = parts[0];
-		    }
-	}*/
+	/*
+	 * public void getUserName(){ AccountManager manager =
+	 * AccountManager.get(this); Account[] accounts =
+	 * manager.getAccountsByType("com.google"); List<String> possibleEmails =
+	 * new LinkedList<String>();
+	 * 
+	 * for (Account account : accounts) { // TODO: Check possibleEmail against
+	 * an email regex or treat // account.name as an email address only for
+	 * certain account.type values. possibleEmails.add(account.name); }
+	 * 
+	 * if(!possibleEmails.isEmpty() && possibleEmails.get(0) != null){ String
+	 * email = possibleEmails.get(0); String[] parts = email.split("@");
+	 * if(parts.length > 0 && parts[0] != null) username = parts[0]; } }
+	 */
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,6 +126,8 @@ public class ConfigActivity extends Activity {
 					String name = c
 							.getString(c
 									.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+					String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+					System.out.println(number);
 					listItems.add(name);
 					adapter.notifyDataSetChanged();
 					// TODO Whatever you want to do with the selected contact

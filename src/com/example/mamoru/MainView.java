@@ -125,36 +125,39 @@ public class MainView extends Fragment {
 		
 		int minutes1 = minutes.getValue();
 		int seconds1 = seconds.getValue();
+		
 		int mSeconds1 = mSeconds.getValue();
-
-		minutes.setEnabled(false);
-		seconds.setEnabled(false);
-		
+	
 		long timeInMSeconds = (minutes1*60*1000) + (seconds1*1000);
-		if(aCounter== null){
-			aCounter = new CountDownTimer(timeInMSeconds, 1000) {
-	
-			     public void onTick(long millisUntilFinished) {
-			         long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
-			         long sec = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
-			         minutes.setValue((int) mins);
-			         seconds.setValue((int) sec);
-			     }
-	
-			     public void onFinish() {
-			         Toast.makeText(getActivity().getApplicationContext(), 
-			        		 "Time Ran Out!!!", Toast.LENGTH_SHORT).show();
-			         minutes.setValue(0);
-			         seconds.setValue(0);
-			         setEnabled2();
-			     }
-			  }.start();
+		if(timeInMSeconds > 0){
+			minutes.setEnabled(false);
+			seconds.setEnabled(false);
+			
+			if(aCounter== null){
+				aCounter = new CountDownTimer(timeInMSeconds, 1000) {
 		
-		}
-		if(flag == 0){
-			setEnabled1();
-		}else{
-			setEnabled2();
+				     public void onTick(long millisUntilFinished) {
+				         long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+				         long sec = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+				         minutes.setValue((int) mins);
+				         seconds.setValue((int) sec);
+				     }
+		
+				     public void onFinish() {
+				         Toast.makeText(getActivity().getApplicationContext(), 
+				        		 "Time Ran Out!!!", Toast.LENGTH_SHORT).show();
+				         minutes.setValue(0);
+				         seconds.setValue(0);
+				         setEnabled2();
+				     }
+				  }.start();
+			
+			}
+			if(flag == 0){
+				setEnabled1();
+			}else{
+				setEnabled2();
+			}
 		}
 
 	}
