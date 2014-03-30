@@ -37,11 +37,11 @@ public final class R {
         public static final int frame1=0x7f090004;
         public static final int image=0x7f09000a;
         public static final int linearLayout1=0x7f090006;
-        public static final int listView=0x7f090002;
+        public static final int listView=0x7f090000;
         public static final int millseconds=0x7f090009;
         public static final int minutes=0x7f090007;
-        public static final int name=0x7f090000;
-        public static final int nameValue=0x7f090001;
+        public static final int name=0x7f090001;
+        public static final int nameValue=0x7f090002;
         public static final int rlayout=0x7f090005;
         public static final int seconds=0x7f090008;
     }

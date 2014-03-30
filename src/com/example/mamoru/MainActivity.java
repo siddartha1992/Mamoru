@@ -1,8 +1,12 @@
 package com.example.mamoru;
 
+import java.util.UUID;
+
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -16,25 +20,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
- /*       if (getResources().getConfiguration().orientation == 
-        		Configuration.ORIENTATION_LANDSCAPE) {
-        	
-        	if (getFragmentManager().findFragmentByTag(FRAG1_TAG) == null) {
-				f1 = new MainView();
-				getFragmentManager().beginTransaction()
-						.add(R.id.frame1, f1, FRAG1_TAG).commit();
-			}
-        }*/
-        
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
 				&& savedInstanceState == null) {
 			// Initializing AddNote fragment
 			if (getFragmentManager().findFragmentByTag(FRAG1_TAG) == null) {
 
-				f1 = new MainView();
+				f1 = new MainView(this.getId());
 				getFragmentManager().beginTransaction()
 						.add(R.id.frame1, f1, FRAG1_TAG).commit();
-
 			}
 		}
     }
@@ -47,4 +40,15 @@ public class MainActivity extends Activity {
         return true;
     }
     
+    private String getId() {
+        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        final String tmDevice, tmSerial, androidId;
+        tmDevice  = "" + tm.getDeviceId();
+        tmSerial  = "" + tm.getSimSerialNumber();
+        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        return deviceUuid.toString();
+    }
 }
