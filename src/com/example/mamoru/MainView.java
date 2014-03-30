@@ -34,7 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 
 @SuppressLint("ResourceAsColor")
@@ -93,32 +96,47 @@ public class MainView extends Fragment {
 		
 		
 		setTime.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				setTime();
+				setTime1();
+			}
+		});
+		
+		timerRef.child("state").addValueEventListener(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot snap) {
+		    	Object o = snap.getValue();
+		    	if (o != null)
+		    		setTime2((Long) o);
+		    }
+
+			@Override
+			public void onCancelled(FirebaseError arg0) {				
 			}
 		});
 
 		return view;
 	}
 
-	public void setTime() {
+	public void setTime1() {
 		
 		int minutes1 = minutes.getValue();
 		int seconds1 = seconds.getValue();
 		int mSeconds1 = mSeconds.getValue();
-
-		minutes.setEnabled(false);
-		seconds.setEnabled(false);
 		
 		long timeInMSeconds = (minutes1*60*1000) + (seconds1*1000);
-		
-		if(aCounter== null){
+		if (timeInMSeconds > 0) {
 			timerRef.child("length").setValue(timeInMSeconds);
-			Log.i("setTime", timeInMSeconds+"");
-			aCounter = new CountDownTimer(timeInMSeconds, 1000) {
+			minutes.setEnabled(false);
+			seconds.setEnabled(false);
+		}
+		Log.i("setTime", timeInMSeconds+"");
+	}
 	
+	public void setTime2(Long timeInMSeconds) {
+		Log.i("setTime2", timeInMSeconds+"");
+		if(aCounter== null){
+			aCounter = new CountDownTimer(timeInMSeconds, 1000) {
 			     public void onTick(long millisUntilFinished) {
 			         long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
 			         long sec = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
@@ -135,13 +153,11 @@ public class MainView extends Fragment {
 			     }
 			  }.start();
 		
-		}
-		if(flag == 0){
+		} if (flag == 0){
 			setEnabled1();
-		}else{
+		} else {
 			setEnabled2();
 		}
-
 	}
 	
 	public void setEnabled1(){
@@ -153,10 +169,11 @@ public class MainView extends Fragment {
 	public void setEnabled2(){
 		minutes.setEnabled(true);
 		seconds.setEnabled(true);
-		 if(aCounter != null) {
-	         aCounter.cancel();
-	         aCounter = null;
-	     }
+		if(aCounter != null) {
+	        aCounter.cancel();
+	        aCounter = null;
+	    }
+		
 		Toast.makeText(getActivity().getApplicationContext(),
 				"Timer Terminated", Toast.LENGTH_SHORT).show();
 		rLayout.setBackgroundColor(Color.parseColor(getString(R.color.Blue)));
