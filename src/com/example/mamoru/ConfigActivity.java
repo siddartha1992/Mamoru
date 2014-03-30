@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.firebase.client.Firebase;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -32,10 +34,15 @@ public class ConfigActivity extends Activity {
 
 	ArrayAdapter<String> adapter;
 	private EditText name;
+	private Firebase settingsRef;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        Firebase firebase = new Firebase("https://glowing-fire-3800.firebaseio.com/");
+		settingsRef = firebase.child("userSettings").child(MainActivity.deviceID);
+		
 		setContentView(R.layout.activity_config);
 
 		name = (EditText) findViewById(R.id.nameValue);
@@ -51,27 +58,19 @@ public class ConfigActivity extends Activity {
 		name.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				// TODO Auto-generated method stub
-
-			}
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				if(!s.toString().isEmpty()){
 					fetchContact.setEnabled(true);
+					settingsRef.child("firstName").setValue(s.toString());
 				}else{
 					fetchContact.setEnabled(false);
 				}
-
 			}
 		});
 
@@ -126,9 +125,12 @@ public class ConfigActivity extends Activity {
 					String name = c
 							.getString(c
 									.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-					String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-					System.out.println(number);
+					//String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+					//System.out.println(number);
 					listItems.add(name);
+					Firebase contactRef = settingsRef.child("contacts").child("0");
+					contactRef.child("name").setValue(name);
+					contactRef.child("number").setValue("12403393356"); // FIXME
 					adapter.notifyDataSetChanged();
 					// TODO Whatever you want to do with the selected contact
 					// name.
@@ -137,5 +139,4 @@ public class ConfigActivity extends Activity {
 			break;
 		}
 	}
-
 }

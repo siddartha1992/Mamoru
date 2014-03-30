@@ -2,6 +2,7 @@ package com.example.mamoru;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 import com.example.mamoru.R.color;
 
@@ -52,15 +53,6 @@ public class MainView extends Fragment {
 
     Firebase settingsRef, timerRef;
 
-    String deviceID;
-
-
-    public MainView() {
-    }
-
-    public MainView(String deviceID) {
-        this.deviceID = deviceID;
-    }
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -74,8 +66,9 @@ public class MainView extends Fragment {
 
         Firebase firebase = new Firebase("https://glowing-fire-3800.firebaseio.com/");
 
-        settingsRef = firebase.child("userSettings").child(deviceID);
-        timerRef    = firebase.child("timerRequests").child(deviceID);
+        timerRef    = firebase.child("timerRequests").child(MainActivity.deviceID);
+        
+        timerRef.removeValue();
 
         setTime = (ImageButton) view.findViewById(R.id.image);
 
@@ -102,17 +95,24 @@ public class MainView extends Fragment {
             }
         });
 
-        timerRef.child("state").addValueEventListener(new ValueEventListener() {
+        timerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snap) {
                 Object o = snap.getValue();
-                if (o != null)
-            setTime2((Long) o);
+                if (o != null) {
+                	Long length = (Long)((Map)o).get("length");
+                	String state = (String)((Map)o).get("state");
+                	
+            		Log.i("onDataChanged:timer", o.toString());
+                	if (state != null && length != null) {
+                		Log.i("onDataChanged:timer", state.toString());
+            			setTime2(length);
+                	}
+                }
             }
 
-        @Override
-        public void onCancelled(FirebaseError arg0) {
-        }
+            @Override
+        	public void onCancelled(FirebaseError arg0) { }
         });
 
         return view;
