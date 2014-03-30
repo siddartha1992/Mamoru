@@ -74,7 +74,7 @@ public class MainView extends Fragment {
         
         
         
-        timerRef.removeValue();
+  //      timerRef.removeValue();
 
         setTime = (ImageButton) view.findViewById(R.id.image);
 
@@ -97,7 +97,7 @@ public class MainView extends Fragment {
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTime();
+                setTimer();
             }
         });
         
@@ -127,7 +127,7 @@ public class MainView extends Fragment {
         return view;
     }
     
-public void setTime() {
+public void setTimer() {
 		
 		int minutes1 = minutes.getValue();
 		int seconds1 = seconds.getValue();
@@ -157,6 +157,7 @@ public void setTime() {
 				         minutes.setValue(0);
 				         seconds.setValue(0);
 				         setEnabled2();
+				         timerRef.removeValue();
 				     }
 				  }.start();
 			
@@ -231,6 +232,7 @@ public void setTime() {
 	    seconds.setEnabled(true);
 	    if(aCounter != null) {
 	        aCounter.cancel();
+	        timerRef.removeValue();
 	        aCounter = null;
 	    }
 	
