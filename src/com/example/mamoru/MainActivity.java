@@ -16,12 +16,33 @@ public class MainActivity extends Activity {
 	public static String deviceID;
 	
 	private MainView f1;
+    private Firebase settingsRef;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deviceID = this.getId();
-        setContentView(R.layout.activity_main);
+
+        Firebase firebase = new Firebase(
+                "https://glowing-fire-3800.firebaseio.com/");
+        settingsRef = firebase.child("userSettings").child(
+                MainActivity.deviceID);
+
+        settingsRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot arg0) {
+                // TODO Auto-generated method stub
+                Object o = arg0.getValue();
+                if (o != null) {
+                    String firstName = (String) ((Map) o).get("firstName");
+                            if (firstName.isEmpty())
+                                setContentView(R.layout.activity_config);
+                            else setContentView(R.layout.activity_main);
+
+                }
+
+            }
         
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
 				&& savedInstanceState == null) {
