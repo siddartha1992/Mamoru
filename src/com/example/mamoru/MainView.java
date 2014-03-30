@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -50,6 +51,9 @@ public class MainView extends Fragment {
     RelativeLayout rLayout;
     int flag;
     CountDownTimer aCounter;
+    
+    public static long mSecondsReturned;
+    
 
     Firebase settingsRef, timerRef;
 
@@ -67,6 +71,8 @@ public class MainView extends Fragment {
         Firebase firebase = new Firebase("https://glowing-fire-3800.firebaseio.com/");
 
         timerRef    = firebase.child("timerRequests").child(MainActivity.deviceID);
+        
+        
         
         timerRef.removeValue();
 
@@ -91,12 +97,14 @@ public class MainView extends Fragment {
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTime1();
+                setTime();
             }
         });
+        
+        
 
 
-        timerRef.addValueEventListener(new ValueEventListener() {
+  /*      timerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snap) {
                 Object o = snap.getValue();
@@ -114,12 +122,60 @@ public class MainView extends Fragment {
 
             @Override
         	public void onCancelled(FirebaseError arg0) { }
-        });
+        });*/
 
         return view;
     }
+    
+public void setTime() {
+		
+		int minutes1 = minutes.getValue();
+		int seconds1 = seconds.getValue();
+		
+		int mSeconds1 = mSeconds.getValue();
+	
+		long timeInMSeconds = (minutes1*60*1000) + (seconds1*1000);
+		if(timeInMSeconds > 0){
+			timerRef.child("length").setValue(timeInMSeconds);
+			minutes.setEnabled(false);
+			seconds.setEnabled(false);
+			
+			if(aCounter== null){
+				aCounter = new CountDownTimer(timeInMSeconds, 1000) {
+		
+				     public void onTick(long millisUntilFinished) {
+				         long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+				         long sec = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+				         minutes.setValue((int) mins);
+				         seconds.setValue((int) sec);
+				         mSecondsReturned = sec;
+				     }
+		
+				     public void onFinish() {
+				         Toast.makeText(getActivity().getApplicationContext(), 
+				        		 "Time Ran Out!!!", Toast.LENGTH_SHORT).show();
+				         minutes.setValue(0);
+				         seconds.setValue(0);
+				         setEnabled2();
+				     }
+				  }.start();
+			
+			}
+			if(flag == 0){
+				setEnabled1();
+			}else{
+				setEnabled2();
+			}
+		}
 
-    public void setTime1() {
+	}
+
+    
+    public static long getSeconds(){
+    	return mSecondsReturned;
+    }
+
+ /*   public void setTime1() {
 
         int minutes1 = minutes.getValue();
         int seconds1 = seconds.getValue();
@@ -131,11 +187,11 @@ public class MainView extends Fragment {
             minutes.setEnabled(false);
             seconds.setEnabled(false);
         }
-        Log.i("setTime", timeInMSeconds+"");
+ //       Log.i("setTime", timeInMSeconds+"");
     }
 
     public void setTime2(Long timeInMSeconds) {
-        Log.i("setTime2", timeInMSeconds+"");
+  //      Log.i("setTime2", timeInMSeconds+"");
         if(aCounter== null){
             aCounter = new CountDownTimer(timeInMSeconds, 1000) {
                 public void onTick(long millisUntilFinished) {
@@ -143,6 +199,8 @@ public class MainView extends Fragment {
                     long sec = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
                     minutes.setValue((int) mins);
                     seconds.setValue((int) sec);
+     //               mSecondsReturned = sec;
+                    
                 }
 
                 public void onFinish() {
@@ -160,7 +218,7 @@ public class MainView extends Fragment {
         } else {
             setEnabled2();
         }
-    }
+    }*/
 
 	public void setEnabled1(){
 	    rLayout.setBackgroundColor(Color.RED);
