@@ -13,6 +13,7 @@ import com.firebase.client.ValueEventListener;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.provider.Contacts.People;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -20,6 +21,7 @@ import android.provider.ContactsContract.Contacts;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.text.Editable;
@@ -32,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 public class ConfigActivity extends Activity {
@@ -45,7 +48,8 @@ public class ConfigActivity extends Activity {
 	ArrayList<Pair> data;
 	private EditText name;
 	private Firebase settingsRef;
-	private Firebase valueRef;
+	private Firebase valueRef, timerRef;
+	Switch swt;
 
 	private class Pair {
 		private String number;
@@ -72,6 +76,7 @@ public class ConfigActivity extends Activity {
 		setContentView(R.layout.activity_config);
 
 		name = (EditText) findViewById(R.id.nameValue);
+		swt = (Switch) findViewById(R.id.switch1);
 
 		fetchContact = (Button) findViewById(R.id.button_Fetch);
 		fetchContact.setEnabled(false);
@@ -173,7 +178,15 @@ public class ConfigActivity extends Activity {
 			}
 		});
 
-		// getUserName();
+		// Vibrate Phone
+		if (MainView.getSeconds() < 30) {
+			if (swt.isChecked()) {
+
+				Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+				v.vibrate(400);
+
+			}
+		}
 
 	}
 
