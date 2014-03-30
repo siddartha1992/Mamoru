@@ -225,6 +225,30 @@ public class ConfigActivity extends Activity {
 						Integer.toString(listItems.size()));
 				contactRef.child("name").setValue(name);
 				contactRef.child("number").setValue(phone); // fixed
+				
+				String userName = "your friend"
+		        settingsRef.addValueEventListener(new ValueEventListener() {
+
+		            @Override
+		            public void onDataChange(DataSnapshot arg0) {
+		                // TODO Auto-generated method stub
+		                Object o = arg0.getValue();
+		                if (o != null) {
+		                    userName = (String) ((Map) o).get("firstName");
+		                            
+
+		                }
+
+		            }
+				
+				String userName = settingsRef.child("firstName").child()
+				
+				String message = String.format("Hi %s! %s added you as an emergency contact. If they're in trouble, you'll get a text message. Visit mamoru.co for more", name, userName);
+				
+				smsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + phone));
+				smsIntent.putExtra( "sms_body", message ); 
+				startActivity( intent );
+				
 				// adapter.notifyDataSetChanged();
 				// TODO Whatever you want to do with the selected contact
 				// name.
